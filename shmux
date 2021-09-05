@@ -20,7 +20,7 @@ if [ -n "$1" ]; then # And we have an argument
   _post_hook_maybe=""
 
   TMUX="$(tmux new-session -d -s "$_session" -n vim)"
-  tmux new-window -c "$_wd" -t "$_session:1" -n tasks 
+  tmux new-window -c "$_wd" -t "$_session:1" -n tasks
   tmux new-window -c "$_wd" -t "$_session:2" -n git
   tmux new-window -c "$_wd" -t "$_session:3" -n grep
   tmux new-window -c "$_wd" -t "$_session:4" -n mon0
@@ -66,7 +66,11 @@ if [ "$2" == "-d" ]; then
 fi
 # Otherwise we attach to the session if we're outside tmux
 if [ -z "$TMUX" ]; then
-  tmux -u attach-session -t "$_session"
+  if [ -z "$_session" ]; then
+    tmux list-sessions
+  else
+    tmux -u attach-session -t "$_session"
+  fi
 # And switch to the session if we're inside
 else
   tmux -u switch-client -t "$_session"
