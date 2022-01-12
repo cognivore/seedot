@@ -8,6 +8,13 @@ _tmux_session_not_found=1
 _session="$(basename "$1")"
 _session="${_session/./_}"
 
+_tasks=".shmux"
+if [ -d ".shmux" ]; then
+  _tasks=".shmux";
+elif [ -d "tasks" ]; then
+  _tasks="tasks";
+fi
+
 tmux start-server || true
 
 # tmux has-session returns value that we'll refer to via $?
@@ -34,9 +41,9 @@ if [ -n "$1" ]; then # And we have an argument
     done
   fi
 
-  if [ -d tasks ]; then
+  if [ -d $_tasks ]; then
     _split="horizontal"
-    for x in tasks/*; do
+    for x in ${_tasks}/*; do
       # Run buffer hook in the current split
       tmux send-keys -t "$_session:1" "$_post_hook_maybe" C-m
       # Run the task the current split
