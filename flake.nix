@@ -1,5 +1,5 @@
 {
-  description = "A Nix flake for shmux with custom tmux configuration";
+  description = "A Nix flake for seedot";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs"; # Ensure nixpkgs is included as an input
@@ -13,7 +13,7 @@
     {
       # Define the package
       packages.${system}.default = pkgs.stdenv.mkDerivation {
-        pname = "shmux";
+        pname = "seedot";
         version = "1.0.0";
 
         # Use the current directory as the source
@@ -26,27 +26,15 @@
         installPhase = ''
           mkdir -p $out/bin
 
-          # Install the shmux script
-          cp shmux $out/bin/
-          chmod +x $out/bin/shmux
-
-          # Install the _tmux.conf file
-          cp _tmux.conf $out/
-
-          # Create the shx wrapper script
-          cat > $out/bin/shx << EOF
-          #!/usr/bin/env bash
-          export SHMUX_TMUX_CONF="$out/_tmux.conf"
-          exec "$out/bin/shmux" "\$@"
-          EOF
-
-          chmod +x $out/bin/shx
+          # Install the seedot script
+          cp seedot $out/bin/
+          chmod +x $out/bin/seedot
         '';
 
         # Metadata for the package
         meta = with pkgs.lib; {
-          description = "shmux script with custom tmux configuration and shx wrapper";
-          homepage = "https://example.com/shmux"; # Replace with actual homepage if available
+          description = "seedot is way to print a bunch of file contents with their file names";
+          homepage = "https://github.com/cognivore/seedot";
           license = licenses.mit;
           maintainers = with maintainers; [ ]; # Add your name or GitHub handle here
           platforms = platforms.unix;

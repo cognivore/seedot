@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+#!/usr/bin/env bash
+
+MAX_DEPTH="${1:-1}"
+
+find . -maxdepth "$MAX_DEPTH" -type f \
+  -exec echo -e "\n=== File: {} ===" \; \
+  -exec cat {} \;
