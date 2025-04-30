@@ -2,43 +2,37 @@
   description = "A Nix flake for seedot";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs"; # Ensure nixpkgs is included as an input
+    nixpkgs.url     = "github:NixOS/nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, ... }:
-    let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; }; # Corrected import statement
-    in
-    {
-      # Define the package
-      packages.${system}.default = pkgs.stdenv.mkDerivation {
-        pname = "seedot";
-        version = "1.0.0";
+  outputs = { self, nixpkgs, flake-utils, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
+      {
+        packages.default = pkgs.stdenv.mkDerivation {
+          pname    = "seedot";
+          version  = "1.0.0";
+          src      = ./.;
 
-        # Use the current directory as the source
-        src = ./.;
+          buildInputs = [];
 
-        # No dependencies are needed
-        buildInputs = [];
+          installPhase = ''
+            mkdir -p $out/bin
+            cp seedot $out/bin/
+            chmod +x $out/bin/seedot
+          '';
 
-        # Install phase to copy files and create the wrapper script
-        installPhase = ''
-          mkdir -p $out/bin
-
-          # Install the seedot script
-          cp seedot $out/bin/
-          chmod +x $out/bin/seedot
-        '';
-
-        # Metadata for the package
-        meta = with pkgs.lib; {
-          description = "seedot is way to print a bunch of file contents with their file names";
-          homepage = "https://github.com/cognivore/seedot";
-          license = licenses.mit;
-          maintainers = with maintainers; [ ]; # Add your name or GitHub handle here
-          platforms = platforms.unix;
+          meta = with pkgs.lib; {
+            description  = "seedot prints a bunch of file contents with their file names";
+            homepage     = "https://github.com/cognivore/seedot";
+            license      = licenses.mit;
+            maintainers  = with maintainers; [ ];
+            platforms    = platforms.unix;
+          };
         };
-      };
-    };
+      });
 }
+
